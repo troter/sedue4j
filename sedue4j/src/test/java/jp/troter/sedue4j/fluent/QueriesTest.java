@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import jp.troter.sedue4j.IndexMeta;
 import jp.troter.sedue4j.IndexType;
+import jp.troter.sedue4j.QueryPart;
 import jp.troter.sedue4j.SchemaMeta;
 
 import org.junit.Test;
@@ -35,5 +36,31 @@ public class QueriesTest {
 
         // hotate
         assertThat(hotate("hotate_idx", "article_id1", "article_id2").getQuery(getSchemaMeta()), is("(hotate_idx:article_id1,article_id2)"));
+    }
+
+    @Test
+    public void composite() {
+        // or
+        assertThat(or(alldocs("all_idx"), fulltext("fulltext_search_idx", "東京")).getQuery(getSchemaMeta()),
+                is("((all_idx:)|(fulltext_search_idx:東京))"));
+        assertThat(or(alldocs("all_idx"), fulltext("fulltext_search_idx", "東京"), hotate("hotate_idx", "article_id1", "article_id2")).getQuery(getSchemaMeta()),
+                is("((all_idx:)|(fulltext_search_idx:東京)|(hotate_idx:article_id1,article_id2))"));
+
+        // and
+        assertThat(and(alldocs("all_idx"), fulltext("fulltext_search_idx", "東京")).getQuery(getSchemaMeta()),
+                is("((all_idx:)&(fulltext_search_idx:東京))"));
+        assertThat(and(alldocs("all_idx"), fulltext("fulltext_search_idx", "東京"), hotate("hotate_idx", "article_id1", "article_id2")).getQuery(getSchemaMeta()),
+                is("((all_idx:)&(fulltext_search_idx:東京)&(hotate_idx:article_id1,article_id2))"));
+
+        // andNot
+        assertThat(andNot(alldocs("all_idx"), fulltext("fulltext_search_idx", "東京")).getQuery(getSchemaMeta()),
+                is("((all_idx:)-(fulltext_search_idx:東京))"));
+
+        // complex
+        QueryPart composite = andNot(and(or(fulltext("fulltext_search_idx", "京都"), fulltext("fulltext_search_idx", "大阪")),
+                                         fulltext("fulltext_search_idx", "奈良")),
+                                     fulltext("fulltext_search_idx_section", "京都", "title"));
+        assertThat(composite.getQuery(getSchemaMeta()),
+                is("((((fulltext_search_idx:京都)|(fulltext_search_idx:大阪))&(fulltext_search_idx:奈良))-(fulltext_search_idx_section:title:京都))"));
     }
 }
