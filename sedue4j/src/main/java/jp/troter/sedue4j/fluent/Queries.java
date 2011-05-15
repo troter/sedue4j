@@ -11,7 +11,7 @@ public class Queries {
         return new AlldocsQueryPart(indexName);
     }
 
-    public static FulltextQueryPart fulltext(CharSequence indexName, String keyword, CharSequence...sections) {
+    public static QueryPart fulltext(CharSequence indexName, String keyword, CharSequence... sections) {
         return new FulltextQueryPart(indexName, keyword, sections);
     }
 
