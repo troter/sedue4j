@@ -19,7 +19,7 @@ public class HotateQueryPart extends AbstractSimpleQueryPart {
     }
 
     @Override
-    EnumSet<IndexType> getValidIndexType() {
+    EnumSet<IndexType> getSupportIndexType() {
         return EnumSet.of(IndexType.HOTATE);
     }
 

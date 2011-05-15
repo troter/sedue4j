@@ -19,15 +19,15 @@ public abstract class AbstractSimpleQueryPart implements QueryPart {
      * クエリパートで利用できるインデックスタイプのセット
      * @return
      */
-    abstract EnumSet<IndexType> getValidIndexType();
+    abstract EnumSet<IndexType> getSupportIndexType();
 
-    protected boolean isValidIndexType(IndexType indexType) {
-        return getValidIndexType().contains(indexType);
+    protected boolean isSupportIndexType(IndexType indexType) {
+        return getSupportIndexType().contains(indexType);
     }
 
     protected IndexMeta getIndexMeta(SchemaMeta schemaMeta, CharSequence indexName) {
         IndexMeta indexMeta = schemaMeta.getIndexMeta(indexName);
-        if (! isValidIndexType(indexMeta.getIndexType())) {
+        if (! isSupportIndexType(indexMeta.getIndexType())) {
             throw new RuntimeException(String.format("インデックスの種類が異なります。"));
         }
         return indexMeta;

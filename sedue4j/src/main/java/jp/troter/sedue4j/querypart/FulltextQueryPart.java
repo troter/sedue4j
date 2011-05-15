@@ -21,7 +21,7 @@ public class FulltextQueryPart extends AbstractSimpleQueryPart {
     }
 
     @Override
-    protected EnumSet<IndexType> getValidIndexType() {
+    protected EnumSet<IndexType> getSupportIndexType() {
         return EnumSet.of(IndexType.INVERTEDINDEX, IndexType.NGRAM, IndexType.CSA, IndexType.HSA, IndexType.UNIGRAM);
     }
 
