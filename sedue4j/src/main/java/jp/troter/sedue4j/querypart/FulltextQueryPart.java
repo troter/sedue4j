@@ -6,6 +6,7 @@ import jp.troter.sedue4j.IndexMeta;
 import jp.troter.sedue4j.IndexType;
 import jp.troter.sedue4j.QueryPart;
 import jp.troter.sedue4j.SchemaMeta;
+import jp.troter.sedue4j.util.EscapeUtil;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -37,19 +38,19 @@ public class FulltextQueryPart implements QueryPart {
         return indexMeta;
     }
 
-    /**
-     * TODO: 予約語のescape
-     */
     @Override
     public String getQuery(SchemaMeta schemaMeta) {
         IndexMeta indexMeta = schemaMeta.getIndexMeta(indexName);
-        if (indexMeta.useSectionQuery()) {
-            String sectionCondition = "*";
-            if (sections != null && sections.length != 0) {
-                sectionCondition = StringUtils.join(sections, ",");
-            }
-            return String.format("(%s:%s:%s)", indexMeta.getName(), sectionCondition, keyword);
+        String escapedKeyword = EscapeUtil.escape(keyword);
+
+        if (! indexMeta.useSectionQuery()) {
+            return String.format("(%s:%s)", indexMeta.getName(), escapedKeyword);
         }
-        return String.format("(%s:%s)", indexMeta.getName(), keyword);
+
+        String sectionCondition = "*";
+        if (sections != null && sections.length != 0) {
+            sectionCondition = StringUtils.join(sections, ",");
+        }
+        return String.format("(%s:%s:%s)", indexMeta.getName(), sectionCondition, escapedKeyword);
     }
 }
