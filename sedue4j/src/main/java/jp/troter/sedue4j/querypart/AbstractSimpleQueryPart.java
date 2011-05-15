@@ -19,10 +19,10 @@ public abstract class AbstractSimpleQueryPart implements QueryPart {
      * クエリパートで利用できるインデックスタイプのセット
      * @return
      */
-    abstract EnumSet<IndexType> getSupportIndexType();
+    abstract EnumSet<IndexType> getSupportIndexTypes();
 
     protected boolean isSupportIndexType(IndexType indexType) {
-        return getSupportIndexType().contains(indexType);
+        return getSupportIndexTypes().contains(indexType);
     }
 
     protected IndexMeta getIndexMeta(SchemaMeta schemaMeta, CharSequence indexName) {

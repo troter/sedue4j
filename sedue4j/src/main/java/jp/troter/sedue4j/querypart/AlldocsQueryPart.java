@@ -13,7 +13,7 @@ public class AlldocsQueryPart extends AbstractSimpleQueryPart {
     }
 
     @Override
-    protected EnumSet<IndexType> getSupportIndexType() {
+    protected EnumSet<IndexType> getSupportIndexTypes() {
         return EnumSet.of(IndexType.ALLDOCS);
     }
 
