@@ -4,38 +4,25 @@ import java.util.EnumSet;
 
 import jp.troter.sedue4j.IndexMeta;
 import jp.troter.sedue4j.IndexType;
-import jp.troter.sedue4j.QueryPart;
 import jp.troter.sedue4j.SchemaMeta;
 import jp.troter.sedue4j.util.EscapeUtil;
 
 import org.apache.commons.lang.StringUtils;
 
-public class FulltextQueryPart implements QueryPart {
+public class FulltextQueryPart extends AbstractSimpleQueryPart {
 
-    protected CharSequence indexName;
     protected String keyword;
     protected CharSequence[] sections;
 
     public FulltextQueryPart(CharSequence indexName, String keyword, CharSequence...sections) {
-        this.indexName = indexName;
+        super(indexName);
         this.keyword = keyword;
         this.sections = sections;
     }
 
-    protected EnumSet<IndexType> validIndexType() {
+    @Override
+    protected EnumSet<IndexType> getValidIndexType() {
         return EnumSet.of(IndexType.INVERTEDINDEX, IndexType.NGRAM, IndexType.CSA, IndexType.HSA, IndexType.UNIGRAM);
-    }
-
-    protected boolean isValidIndexType(IndexType indexType) {
-        return validIndexType().contains(indexType);
-    }
-
-    protected IndexMeta getIndexMeta(SchemaMeta schemaMeta, CharSequence indexName) {
-        IndexMeta indexMeta = schemaMeta.getIndexMeta(indexName);
-        if (! isValidIndexType(indexMeta.getIndexType())) {
-            throw new RuntimeException(String.format("インデックスの種類が異なります。"));
-        }
-        return indexMeta;
     }
 
     @Override
