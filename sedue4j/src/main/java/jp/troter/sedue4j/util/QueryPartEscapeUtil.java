@@ -2,7 +2,7 @@ package jp.troter.sedue4j.util;
 
 import org.apache.commons.lang.StringUtils;
 
-public class EscapeUtil {
+public class QueryPartEscapeUtil {
 
     /** 予約語 */
     public static final String[] META_CHARRACTORS
