@@ -8,6 +8,12 @@ import jp.troter.sedue4j.querypart.HotateQueryPart;
 
 public class Queries {
 
+    public static final String OPERATOR_OR = "%7C";
+
+    public static final String OPERATOR_AND = "%26";
+
+    public static final String OPERATOR_NOT = "%2D";
+
     public static QueryPart alldocs(CharSequence indexName) {
         return new AlldocsQueryPart(indexName);
     }
@@ -21,14 +27,14 @@ public class Queries {
     }
 
     public static CompositeQueryPart or(final QueryPart... children) {
-        return new CompositeQueryPart("|", children);
+        return new CompositeQueryPart(OPERATOR_OR, children);
     }
 
     public static CompositeQueryPart and(final QueryPart... children) {
-        return new CompositeQueryPart("&", children);
+        return new CompositeQueryPart(OPERATOR_AND, children);
     }
 
     public static CompositeQueryPart andNot(final QueryPart hitQueryPart, final QueryPart notHitQueryPart) {
-        return new CompositeQueryPart("-", new QueryPart[]{hitQueryPart, notHitQueryPart});
+        return new CompositeQueryPart(OPERATOR_NOT, new QueryPart[]{hitQueryPart, notHitQueryPart});
     }
 }

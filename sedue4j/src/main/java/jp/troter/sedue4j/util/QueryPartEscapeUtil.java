@@ -1,5 +1,8 @@
 package jp.troter.sedue4j.util;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 import org.apache.commons.lang.StringUtils;
 
 public class QueryPartEscapeUtil {
@@ -38,6 +41,14 @@ public class QueryPartEscapeUtil {
     public static String escapeRange(String value) {
         String result = StringUtils.replaceEach(value, RANGE_ESCAPE_META_CHARRACTORS, RANGE_ESCAPE_ESCAPED_META_CHARRACTORS);
         return RANGE_ESCAPE_SEPARATOR + result + RANGE_ESCAPE_SEPARATOR;
+    }
+
+    static public String urlEncode(String input) {
+         try {
+            return URLEncoder.encode(input, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException();
+        }
     }
 
 }

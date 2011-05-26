@@ -28,7 +28,7 @@ public class FulltextQueryPart extends AbstractSimpleQueryPart {
     @Override
     public String getQuery(SchemaMeta schemaMeta) {
         IndexMeta indexMeta = schemaMeta.getIndexMeta(indexName);
-        String escapedKeyword = QueryPartEscapeUtil.escape(keyword);
+        String escapedKeyword = QueryPartEscapeUtil.urlEncode(QueryPartEscapeUtil.escape(keyword));
 
         if (! indexMeta.useSectionQuery()) {
             return String.format("(%s:%s)", indexMeta.getName(), escapedKeyword);
@@ -43,7 +43,7 @@ public class FulltextQueryPart extends AbstractSimpleQueryPart {
 
     @Override
     public String getQuery() {
-        String escapedKeyword = QueryPartEscapeUtil.escape(keyword);
+        String escapedKeyword = QueryPartEscapeUtil.urlEncode(QueryPartEscapeUtil.escape(keyword));
 
         if (sections != null && sections.length != 0) {
             String sectionCondition = StringUtils.join(sections, ",");
