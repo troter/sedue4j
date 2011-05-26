@@ -22,4 +22,9 @@ public class AlldocsQueryPart extends AbstractSimpleQueryPart {
         IndexMeta indexMeta = getIndexMeta(schemaMeta, this.indexName);
         return String.format("(%s:)", indexMeta.getName());
     }
+
+    @Override
+    public String getQuery() {
+        return String.format("(%s:)", indexName);
+    }
 }

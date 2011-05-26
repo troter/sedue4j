@@ -35,4 +35,12 @@ public class CompositeQueryPart implements QueryPart {
         return String.format("(%s)", StringUtils.join(queries, operator));
     }
 
+    @Override
+    public String getQuery() {
+        List<String> queries = new ArrayList<String>();
+        for (QueryPart child : children) {
+            queries.add(child.getQuery());
+        }
+        return String.format("(%s)", StringUtils.join(queries, operator));
+    }
 }

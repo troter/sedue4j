@@ -29,4 +29,10 @@ public class HotateQueryPart extends AbstractSimpleQueryPart {
         String escapedArticleIds = QueryPartEscapeUtil.escape(StringUtils.join(articleIds, ","));
         return String.format("(%s:%s)", indexMeta.getName(), escapedArticleIds);
     }
+
+    @Override
+    public String getQuery() {
+        String escapedArticleIds = QueryPartEscapeUtil.escape(StringUtils.join(articleIds, ","));
+        return String.format("(%s:%s)", indexName, escapedArticleIds);
+    }
 }

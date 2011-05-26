@@ -40,4 +40,15 @@ public class FulltextQueryPart extends AbstractSimpleQueryPart {
         }
         return String.format("(%s:%s:%s)", indexMeta.getName(), sectionCondition, escapedKeyword);
     }
+
+    @Override
+    public String getQuery() {
+        String escapedKeyword = QueryPartEscapeUtil.escape(keyword);
+
+        if (sections != null && sections.length != 0) {
+            String sectionCondition = StringUtils.join(sections, ",");
+            return String.format("(%s:%s:%s)", indexName, sectionCondition, escapedKeyword);
+        }
+        return String.format("(%s:%s)", indexName, escapedKeyword);
+    }
 }

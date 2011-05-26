@@ -9,4 +9,10 @@ public interface QueryPart {
      * @return
      */
     String getQuery(SchemaMeta schemaMeta);
+
+    /**
+     * スキーマ定義なしでクエリー組み立を行う
+     * @return
+     */
+    String getQuery();
 }
