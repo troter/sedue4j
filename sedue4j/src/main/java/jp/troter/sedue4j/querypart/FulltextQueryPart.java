@@ -4,6 +4,7 @@ import java.util.EnumSet;
 
 import jp.troter.sedue4j.IndexMeta;
 import jp.troter.sedue4j.IndexType;
+import jp.troter.sedue4j.QueryPart;
 import jp.troter.sedue4j.SchemaMeta;
 import jp.troter.sedue4j.util.QueryPartEscapeUtil;
 
@@ -26,10 +27,17 @@ public class FulltextQueryPart extends AbstractSimpleQueryPart {
     }
 
     @Override
-    public String getQuery(SchemaMeta schemaMeta) {
-        IndexMeta indexMeta = schemaMeta.getIndexMeta(indexName);
+    public String getQuery(SchemaMeta schemaMeta, QueryPart defaultQueryPart) {
         String escapedKeyword = QueryPartEscapeUtil.urlEncode(QueryPartEscapeUtil.escape(keyword));
+        if (schemaMeta == null) {
+            if (sections != null && sections.length != 0) {
+                String sectionCondition = StringUtils.join(sections, ",");
+                return String.format("(%s:%s:%s)", indexName, sectionCondition, escapedKeyword);
+            }
+            return String.format("(%s:%s)", indexName, escapedKeyword);
+        }
 
+        IndexMeta indexMeta = schemaMeta.getIndexMeta(indexName);
         if (! indexMeta.useSectionQuery()) {
             return String.format("(%s:%s)", indexMeta.getName(), escapedKeyword);
         }
@@ -42,13 +50,17 @@ public class FulltextQueryPart extends AbstractSimpleQueryPart {
     }
 
     @Override
-    public String getQuery() {
-        String escapedKeyword = QueryPartEscapeUtil.urlEncode(QueryPartEscapeUtil.escape(keyword));
+    public String getQuery(SchemaMeta schemaMeta) {
+        return getQuery(schemaMeta, null);
+    }
 
-        if (sections != null && sections.length != 0) {
-            String sectionCondition = StringUtils.join(sections, ",");
-            return String.format("(%s:%s:%s)", indexName, sectionCondition, escapedKeyword);
-        }
-        return String.format("(%s:%s)", indexName, escapedKeyword);
+    @Override
+    public String getQuery(QueryPart defaultQueryPart) {
+        return getQuery(null, defaultQueryPart);
+    }
+
+    @Override
+    public String getQuery() {
+        return getQuery(null, null);
     }
 }

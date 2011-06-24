@@ -27,20 +27,37 @@ public class CompositeQueryPart implements QueryPart {
     }
 
     @Override
-    public String getQuery(SchemaMeta schemaMeta) {
+    public String getQuery(SchemaMeta schemaMeta, QueryPart defaultQueryPart) {
+        if (children.isEmpty()) {
+            if (defaultQueryPart == null) {
+                throw new RuntimeException("デフォルトのクエリーが存在しないため、クエリーの組み立てできません");
+            }
+            return defaultQueryPart.getQuery(schemaMeta);
+        }
+
+        if (children.size() == 1) {
+            return children.get(0).getQuery(schemaMeta, defaultQueryPart);
+        }
+
         List<String> queries = new ArrayList<String>();
         for (QueryPart child : children) {
-            queries.add(child.getQuery(schemaMeta));
+            queries.add(child.getQuery(schemaMeta, defaultQueryPart));
         }
         return String.format("(%s)", StringUtils.join(queries, operator));
     }
 
     @Override
+    public String getQuery(SchemaMeta schemaMeta) {
+        return getQuery(schemaMeta, null);
+    }
+
+    @Override
+    public String getQuery(QueryPart defaultQueryPart) {
+        return getQuery(null, defaultQueryPart);
+    }
+
+    @Override
     public String getQuery() {
-        List<String> queries = new ArrayList<String>();
-        for (QueryPart child : children) {
-            queries.add(child.getQuery());
-        }
-        return String.format("(%s)", StringUtils.join(queries, operator));
+        return getQuery(null, null);
     }
 }

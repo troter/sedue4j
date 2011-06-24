@@ -49,18 +49,40 @@ public class QueriesTest {
         assertThat(hotate("hotate_idx", "article_id1", "article_id2").getQuery(getSchemaMeta()), is("(hotate_idx:article_id1,article_id2)"));
     }
 
+    @Test(expected=RuntimeException.class)
+    public void empty_or_exception() {
+        or().getQuery();
+    }
+
+    @Test(expected=RuntimeException.class)
+    public void empty_and_exception() {
+        and().getQuery();
+    }
+
+    @Test()
+    public void empty() {
+        assertThat(or().getQuery(alldocs("all_idx")), is("(all_idx:)"));
+        assertThat(and().getQuery(alldocs("all_idx")), is("(all_idx:)"));
+    }
+
+    @Test
+    public void single() {
+        assertThat(or(fulltext("fulltext_search_idx", "東京")).getQuery(), is("(fulltext_search_idx:%E6%9D%B1%E4%BA%AC)"));
+        assertThat(and(fulltext("fulltext_search_idx", "東京")).getQuery(), is("(fulltext_search_idx:%E6%9D%B1%E4%BA%AC)"));
+    }
+
     @Test
     public void composite() {
         // or
         assertThat(or(alldocs("all_idx"), fulltext("fulltext_search_idx", "東京")).getQuery(),
-                is("((all_idx:)|(fulltext_search_idx:%E6%9D%B1%E4%BA%AC))"));
+                is("((all_idx:)%7C(fulltext_search_idx:%E6%9D%B1%E4%BA%AC))"));
         assertThat(or(alldocs("all_idx"), fulltext("fulltext_search_idx", "東京"), hotate("hotate_idx", "article_id1", "article_id2")).getQuery(),
-                is("((all_idx:)|(fulltext_search_idx:%E6%9D%B1%E4%BA%AC)|(hotate_idx:article_id1,article_id2))"));
+                is("((all_idx:)%7C(fulltext_search_idx:%E6%9D%B1%E4%BA%AC)%7C(hotate_idx:article_id1,article_id2))"));
         // or with schema
         assertThat(or(alldocs("all_idx"), fulltext("fulltext_search_idx", "東京")).getQuery(getSchemaMeta()),
-                is("((all_idx:)|(fulltext_search_idx:%E6%9D%B1%E4%BA%AC))"));
+                is("((all_idx:)%7C(fulltext_search_idx:%E6%9D%B1%E4%BA%AC))"));
         assertThat(or(alldocs("all_idx"), fulltext("fulltext_search_idx", "東京"), hotate("hotate_idx", "article_id1", "article_id2")).getQuery(getSchemaMeta()),
-                is("((all_idx:)|(fulltext_search_idx:%E6%9D%B1%E4%BA%AC)|(hotate_idx:article_id1,article_id2))"));
+                is("((all_idx:)%7C(fulltext_search_idx:%E6%9D%B1%E4%BA%AC)%7C(hotate_idx:article_id1,article_id2))"));
 
         // and
         assertThat(and(alldocs("all_idx"), fulltext("fulltext_search_idx", "東京")).getQuery(),
@@ -75,19 +97,19 @@ public class QueriesTest {
 
         // andNot
         assertThat(andNot(alldocs("all_idx"), fulltext("fulltext_search_idx", "東京")).getQuery(),
-                is("((all_idx:)-(fulltext_search_idx:%E6%9D%B1%E4%BA%AC))"));
+                is("((all_idx:)%2D(fulltext_search_idx:%E6%9D%B1%E4%BA%AC))"));
         // andNot with schema
         assertThat(andNot(alldocs("all_idx"), fulltext("fulltext_search_idx", "東京")).getQuery(getSchemaMeta()),
-                is("((all_idx:)-(fulltext_search_idx:%E6%9D%B1%E4%BA%AC))"));
+                is("((all_idx:)%2D(fulltext_search_idx:%E6%9D%B1%E4%BA%AC))"));
 
         QueryPart composite = andNot(and(or(fulltext("fulltext_search_idx", "京都"), fulltext("fulltext_search_idx", "大阪")),
                                          fulltext("fulltext_search_idx", "奈良")),
                                      fulltext("fulltext_search_idx_section", "京都", "title"));
         // complex
         assertThat(composite.getQuery(),
-                is("((((fulltext_search_idx:%E4%BA%AC%E9%83%BD)|(fulltext_search_idx:%E5%A4%A7%E9%98%AA))%26(fulltext_search_idx:%E5%A5%88%E8%89%AF))-(fulltext_search_idx_section:title:%E4%BA%AC%E9%83%BD))"));
+                is("((((fulltext_search_idx:%E4%BA%AC%E9%83%BD)%7C(fulltext_search_idx:%E5%A4%A7%E9%98%AA))%26(fulltext_search_idx:%E5%A5%88%E8%89%AF))%2D(fulltext_search_idx_section:title:%E4%BA%AC%E9%83%BD))"));
         // complex with schema
         assertThat(composite.getQuery(getSchemaMeta()),
-                is("((((fulltext_search_idx:%E4%BA%AC%E9%83%BD)|(fulltext_search_idx:%E5%A4%A7%E9%98%AA))%26(fulltext_search_idx:%E5%A5%88%E8%89%AF))-(fulltext_search_idx_section:title:%E4%BA%AC%E9%83%BD))"));
+                is("((((fulltext_search_idx:%E4%BA%AC%E9%83%BD)%7C(fulltext_search_idx:%E5%A4%A7%E9%98%AA))%26(fulltext_search_idx:%E5%A5%88%E8%89%AF))%2D(fulltext_search_idx_section:title:%E4%BA%AC%E9%83%BD))"));
     }
 }

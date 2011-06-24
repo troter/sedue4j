@@ -4,6 +4,7 @@ import java.util.EnumSet;
 
 import jp.troter.sedue4j.IndexMeta;
 import jp.troter.sedue4j.IndexType;
+import jp.troter.sedue4j.QueryPart;
 import jp.troter.sedue4j.SchemaMeta;
 import jp.troter.sedue4j.util.QueryPartEscapeUtil;
 
@@ -24,15 +25,28 @@ public class HotateQueryPart extends AbstractSimpleQueryPart {
     }
 
     @Override
-    public String getQuery(SchemaMeta schemaMeta) {
+    public String getQuery(SchemaMeta schemaMeta, QueryPart defaultQueryPart) {
+        if (schemaMeta == null) {
+            String escapedArticleIds = QueryPartEscapeUtil.escape(StringUtils.join(articleIds, ","));
+            return String.format("(%s:%s)", indexName, escapedArticleIds);
+        }
         IndexMeta indexMeta = schemaMeta.getIndexMeta(indexName);
         String escapedArticleIds = QueryPartEscapeUtil.escape(StringUtils.join(articleIds, ","));
         return String.format("(%s:%s)", indexMeta.getName(), escapedArticleIds);
     }
 
     @Override
+    public String getQuery(SchemaMeta schemaMeta) {
+        return getQuery(schemaMeta, null);
+    }
+
+    @Override
+    public String getQuery(QueryPart defaultQueryPart) {
+        return getQuery(null, defaultQueryPart);
+    }
+
+    @Override
     public String getQuery() {
-        String escapedArticleIds = QueryPartEscapeUtil.escape(StringUtils.join(articleIds, ","));
-        return String.format("(%s:%s)", indexName, escapedArticleIds);
+        return getQuery(null, null);
     }
 }
