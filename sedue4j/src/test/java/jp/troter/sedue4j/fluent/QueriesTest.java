@@ -7,6 +7,7 @@ import jp.troter.sedue4j.IndexMeta;
 import jp.troter.sedue4j.IndexType;
 import jp.troter.sedue4j.QueryPart;
 import jp.troter.sedue4j.SchemaMeta;
+import jp.troter.sedue4j.exception.EmptyQueryPartException;
 
 import org.junit.Test;
 
@@ -58,11 +59,10 @@ public class QueriesTest {
     public void empty_and_exception() {
         and().getQuery();
     }
-
     @Test()
-    public void empty() {
-        assertThat(or().getQuery(alldocs("all_idx")), is("(all_idx:)"));
-        assertThat(and().getQuery(alldocs("all_idx")), is("(all_idx:)"));
+    public void empty_with_defaults() {
+        assertThat(defaults(alldocs("all_idx"), or()).getQuery(), is("(all_idx:)"));
+        assertThat(defaults(alldocs("all_idx"), and()).getQuery(), is("(all_idx:)"));
     }
 
     @Test

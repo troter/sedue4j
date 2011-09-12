@@ -4,7 +4,6 @@ import java.util.EnumSet;
 
 import jp.troter.sedue4j.IndexMeta;
 import jp.troter.sedue4j.IndexType;
-import jp.troter.sedue4j.QueryPart;
 import jp.troter.sedue4j.SchemaMeta;
 
 public class AlldocsQueryPart extends AbstractSimpleQueryPart {
@@ -19,7 +18,7 @@ public class AlldocsQueryPart extends AbstractSimpleQueryPart {
     }
 
     @Override
-    public String getQuery(SchemaMeta schemaMeta, QueryPart defaultQueryPart) {
+    public String getQuery(SchemaMeta schemaMeta) {
         if (schemaMeta == null) {
             return String.format("(%s:)", indexName);
         }
@@ -28,17 +27,7 @@ public class AlldocsQueryPart extends AbstractSimpleQueryPart {
     }
 
     @Override
-    public String getQuery(SchemaMeta schemaMeta) {
-        return getQuery(schemaMeta, null);
-    }
-
-    @Override
-    public String getQuery(QueryPart defaultQueryPart) {
-        return getQuery(null, defaultQueryPart);
-    }
-
-    @Override
     public String getQuery() {
-        return getQuery(null, null);
+        return getQuery(null);
     }
 }

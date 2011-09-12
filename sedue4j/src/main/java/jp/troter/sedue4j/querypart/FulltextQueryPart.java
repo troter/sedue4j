@@ -4,7 +4,6 @@ import java.util.EnumSet;
 
 import jp.troter.sedue4j.IndexMeta;
 import jp.troter.sedue4j.IndexType;
-import jp.troter.sedue4j.QueryPart;
 import jp.troter.sedue4j.SchemaMeta;
 import jp.troter.sedue4j.util.QueryPartEscapeUtil;
 
@@ -27,7 +26,7 @@ public class FulltextQueryPart extends AbstractSimpleQueryPart {
     }
 
     @Override
-    public String getQuery(SchemaMeta schemaMeta, QueryPart defaultQueryPart) {
+    public String getQuery(SchemaMeta schemaMeta) {
         String escapedKeyword = QueryPartEscapeUtil.urlEncode(QueryPartEscapeUtil.escape(keyword));
         if (schemaMeta == null) {
             if (sections != null && sections.length != 0) {
@@ -50,17 +49,7 @@ public class FulltextQueryPart extends AbstractSimpleQueryPart {
     }
 
     @Override
-    public String getQuery(SchemaMeta schemaMeta) {
-        return getQuery(schemaMeta, null);
-    }
-
-    @Override
-    public String getQuery(QueryPart defaultQueryPart) {
-        return getQuery(null, defaultQueryPart);
-    }
-
-    @Override
     public String getQuery() {
-        return getQuery(null, null);
+        return getQuery(null);
     }
 }

@@ -7,6 +7,7 @@ import java.util.List;
 
 import jp.troter.sedue4j.QueryPart;
 import jp.troter.sedue4j.SchemaMeta;
+import jp.troter.sedue4j.exception.EmptyQueryPartException;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -27,37 +28,24 @@ public class CompositeQueryPart implements QueryPart {
     }
 
     @Override
-    public String getQuery(SchemaMeta schemaMeta, QueryPart defaultQueryPart) {
+    public String getQuery(SchemaMeta schemaMeta) {
         if (children.isEmpty()) {
-            if (defaultQueryPart == null) {
-                throw new RuntimeException("デフォルトのクエリーが存在しないため、クエリーの組み立てできません");
-            }
-            return defaultQueryPart.getQuery(schemaMeta);
+            throw new EmptyQueryPartException("デフォルトのクエリーが存在しないため、クエリーの組み立てできません");
         }
 
         if (children.size() == 1) {
-            return children.get(0).getQuery(schemaMeta, defaultQueryPart);
+            return children.get(0).getQuery(schemaMeta);
         }
 
         List<String> queries = new ArrayList<String>();
         for (QueryPart child : children) {
-            queries.add(child.getQuery(schemaMeta, defaultQueryPart));
+            queries.add(child.getQuery(schemaMeta));
         }
         return String.format("(%s)", StringUtils.join(queries, operator));
     }
 
     @Override
-    public String getQuery(SchemaMeta schemaMeta) {
-        return getQuery(schemaMeta, null);
-    }
-
-    @Override
-    public String getQuery(QueryPart defaultQueryPart) {
-        return getQuery(null, defaultQueryPart);
-    }
-
-    @Override
     public String getQuery() {
-        return getQuery(null, null);
+        return getQuery(null);
     }
 }
